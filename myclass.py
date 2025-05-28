@@ -12,8 +12,8 @@ agent = create_csv_agent(
     allow_dangerous_code=True,
 )
 
-print(agent.run("What are the total marks scored by Sanjay?"))
-
-print(agent.run("list toppers of every subject"))
-
 print(agent.run("Who is the topper of my class?"))
+
+print(agent.run("what are the top marks in each subject?"))
+
+print(agent.run("list top marks of every subject along with student name who scored it"))
