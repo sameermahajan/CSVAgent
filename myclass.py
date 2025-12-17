@@ -4,7 +4,7 @@ from langchain_openai import ChatOpenAI, OpenAI
 
 llm = ChatOpenAI(base_url = 'http://localhost:11434/v1', 
                     api_key = 'ollama', 
-                    model = 'llama2', 
+                    model = 'llama3.1', 
                     temperature=0)
 
 agent = create_csv_agent(
@@ -15,11 +15,14 @@ agent = create_csv_agent(
 
     prefix = (
         "You are a CSV data analysis agent.\n"
-        "You MUST use pandas to compute answers.\n"
+        "Use the python tool python_repl_ast for any dataframe operations.\n"
         "When finished, respond EXACTLY as:\n"
         "Final Answer: <answer>\n"
         "Do not add extra text.\n"
-        "Make sure you add up marks of all 5 subjects that every student is enrolled in.\n"
+        "Make sure you add up marks of all 5 subjects that every student \n"
+        "out of total 100 students is enrolled in.\n"
+        "Compute total marks for each student and then find the topper.\n"
+        "Do not write raw Python in the final answer.\n"
     ),
 
     # suffix = (
