@@ -1,0 +1,5 @@
+langchain_community
+chromadb
+langchain_experimental
+langchain_ollama
+pandas
