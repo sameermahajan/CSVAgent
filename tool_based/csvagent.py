@@ -85,6 +85,8 @@ Rules:
 
 use 'student_id' as column name for students dataframe NOT 'id'
 
+use unique identifiers for dataframes for groupby operations and any aggregations to avoid duplicates
+
 Question:
 {question}
 """
