@@ -51,9 +51,10 @@ def retrieve_schema(question: str, k: int = 5) -> str:
 # ----------------------------
 students = pd.read_csv("students.csv")
 marks = pd.read_csv("marks.csv")
+subjects = pd.read_csv("subjects.csv")
 
 exec_python_tool = PythonAstREPLTool(
-    locals={"pd": pd, "students": students, "marks": marks}
+    locals={"pd": pd, "students": students, "marks": marks, "subjects": subjects}
 )
 
 # ----------------------------
@@ -67,36 +68,44 @@ llm = ChatOllama(
 # ----------------------------
 # Run pipeline
 # ----------------------------
-question = "Who is the topper of the class?"
+def run_pipeline(question: str):
+    schema = retrieve_schema(question)
 
-schema = retrieve_schema(question)
+    print("Schema is : ", schema)
 
-print("Schema is : ", schema)
+    prompt = f"""
+        You are a data analysis agent.
 
-prompt = f"""
-You are a data analysis agent.
+        Schema information:
+        {schema}
 
-Schema information:
-{schema}
+        Rules:
+        - Use ONLY pandas
+        - Do NOT explain anything
+        - use 'student_id' as column name for students dataframe NOT 'id'
+        - use 'subject_id' as column name for subjects dataframe NOT 'id'
+        - use unique identifiers for dataframes for groupby operations and any aggregations to avoid duplicates
+        - DO NOT generate sample data
+        - USE ONLY data already loaded in dataframes and passed to the tool
 
-Rules:
-- Use ONLY pandas
-- Do NOT explain anything
+        Question:
+        {question}
+    """
 
-use 'student_id' as column name for students dataframe NOT 'id'
+    python_code = llm.invoke(prompt).content
 
-use unique identifiers for dataframes for groupby operations and any aggregations to avoid duplicates
+    print("Python code is : ", python_code)
 
-Question:
-{question}
-"""
+    python_code = strip_markdown_code_fences(python_code)
 
-python_code = llm.invoke(prompt).content
+    result = exec_python_tool.invoke(python_code)
 
-print("Python code is : ", python_code)
+    print(result)
 
-python_code = strip_markdown_code_fences(python_code)
+run_pipeline("Who is the topper of the class?")
 
-result = exec_python_tool.invoke(python_code)
+run_pipeline("What are the top marks in each subject?")
 
-print(result)
+run_pipeline("List top marks of every subject along with student name who scored it")
+
+
